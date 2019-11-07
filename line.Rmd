@@ -1,0 +1,125 @@
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.1'
+      jupytext_version: 1.2.4
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+```{python}
+import pandas as pd
+from helpers import draw_scatter_plot, scale, clamp_database
+```
+
+```{python}
+df = pd.read_csv('social_media_use.csv')
+
+df
+```
+
+```{python}
+df_two_col = df[['Grade level', 'Social media accounts']]
+df_two_col = df_two_col.dropna()
+for i in range(len(df_two_col)):
+    df_two_col.iloc[i,0] = int(df_two_col.iloc[i,0].split()[1])
+
+df_two_col
+```
+
+```{python}
+df_two_col_clamp = clamp_database(df_two_col, (5,12), (0,50))
+```
+
+```{python}
+data_points_list = [(x,y) for x, y in df_two_col_clamp.values]
+data_points_list
+```
+
+```{python}
+from turtle import position,heading,penup,pendown,goto,setheading,speed,pencolor
+```
+
+Here are the default settings for the scatter plot:
+
+    plot_settings = {
+        'turtle_x_axis_domain' = (-150,150)
+        'turtle_y_axis_domain' = (-150,150)
+        'data_x_axis_domain' = (min of data minus x_axis_increment, max of data plus x_axis_increment)
+        'x_axis_increment' = 10
+        'data_y_axis_domain' = (min of data minus y_axis_increment, max of data plus y_axis_increment)
+        'y_axis_increment' = 10
+        'tick_size' = tick_size
+    }
+
+```{python}
+def line(m,b,plot_settings):
+    speed(0)
+    pencolor('red')
+    start_x = plot_settings['data_x_axis_domain'][0]
+    start_y = m*start_x + b
+    
+    end_x = plot_settings['data_x_axis_domain'][1]
+    end_y = m*end_x + b
+        
+    scaled_start_x = scale(start_x, plot_settings['data_x_axis_domain'], plot_settings['turtle_x_axis_domain'])
+    scaled_start_y = scale(start_y, plot_settings['data_y_axis_domain'], plot_settings['turtle_y_axis_domain'])
+    scaled_end_x = scale(end_x, plot_settings['data_x_axis_domain'], plot_settings['turtle_x_axis_domain'])
+    scaled_end_y = scale(end_y, plot_settings['data_y_axis_domain'], plot_settings['turtle_y_axis_domain'])
+
+    
+    start_pos = position()
+    start_head = heading()
+    penup()
+    goto(scaled_start_x, scaled_start_y)
+    pendown()
+    goto(scaled_end_x, scaled_end_y)
+    penup()
+    goto(start_pos)
+    setheading(start_head)
+```
+
+```{python}
+def loss(m,b,data_points_list):
+    sqerror = 0
+    for point in data_points_list:
+        line_y = m*point[0] + b
+        distance = point[1] - line_y
+        sqerror += pow(distance,2)
+    return sqerror/len(data_points_list)
+```
+
+```{python}
+plot_settings = draw_scatter_plot(data_points_list, df_two_col_clamp.columns[0], df_two_col_clamp.columns[1], x_axis_increment = 1)
+
+m = .25
+b = 4
+line(m, b, plot_settings)
+loss(m, b, data_points_list)
+```
+
+```{python}
+min_loss = loss(0,0, data_points_list)
+min_m = 0
+min_b = 0
+for i in range(0,int(2/.25)):
+    for b in range(0,10):
+        curr_loss = loss(i*.25, b, data_points_list)
+        if curr_loss < min_loss:
+            min_loss = curr_loss
+            min_m = i*.25
+            min_b = b
+
+(min_m, min_b)
+(min_m, min_b, loss(min_m, min_b, data_points_list))
+            
+```
+
+```{python}
+
+```
