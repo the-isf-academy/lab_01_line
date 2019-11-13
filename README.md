@@ -1,4 +1,4 @@
-# Lab: Summarizing data with a scaled_increment
+# Lab: Summarizing data with a line
 
 In this lab, students will use build on their work with scatter plots to add a line of best fit to the plot.
 
