@@ -72,7 +72,7 @@ We can define a line to represent a potential trend using a slope variable (`m`)
 💻 **TODO:** Try out different `m` and `b` variables to create a line that best summarizes the trend in the data *(You'll probably want to add the optional `jitter=True` arguement to the `draw()` function here too)*.
 
 ```{python}
-ax = create_graph(x_var, y_var)
+ax = create_graph(x_var_label, y_var_label)
 draw(data_points_list, ax)
 
 m = # REPLACE THIS COMMENT WITH A SLOPE VALUE
@@ -102,7 +102,7 @@ The code below will use your loss function to calculate the loss of a given line
 
 
 ```{python}
-ax = create_graph(x_var, y_var)
+ax = create_graph(x_var_label, y_var_label)
 draw(data_points_list, ax)
 
 m = 0
