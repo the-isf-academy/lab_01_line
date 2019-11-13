@@ -17,7 +17,7 @@ import pandas as pd
 from helpers import clamp_database, create_graph, draw, draw_line, add_loss
 ```
 
-# Setting up our data
+# 🚿 Cleaning up our data
 
 In the past few classes, we dug into the data from our social media survey. You can run the cell below as a reminder of what it looks like.
 
@@ -28,120 +28,90 @@ df
 
 For this lab, we're going to focus on two variables of that data to see how related they are.
 
-Below, we've chosen to use the `grade` variable and the `sm_accounts` variable. This will help us see whether there is a relationship between students' grade level and the number of social media accounts they reported having. *You can play around with other variables if you'd like to see what other relationships exist in our data.*
+Below, we've chosen to use the `grade` variable and the `sm_time` variable. This will help us see whether there is a relationship between students' grade level and the amount of time they report spending on social media. *You can play around with other variables if you'd like to see what other relationships exist in our data.*
 
-We're also setting up variables to define the domain we want all of our data to fall within. *You can play with this piece as well.*
+We're also setting up variables to define the domain we want all of our data to fall within. This will help us deal with outliers in our data. *You can play with these domains as well and see how they affect the relationship we find.*
 
 ```{python}
-x_var = 'grade'
-y_var = 'sm_time'
+x_var_label = 'grade'
+y_var_label = 'sm_time'
 x_domain = (5,12)
 y_domain = (0,50)
 ```
 
-To get you started, we'll clean up the data a little by focusing on the two variables specified above, removing and reponses where people didn't answer the question for these variables, and making sure the data fits within a specified domain `x_domain` and `y_domain`.
+To get you started, we'll clean up the data a little by focusing on the two variables specified above, removing any reponses where people didn't answer the question for these variables, and making sure the data fits within a specified domain `x_domain` and `y_domain`.
 
 We also moved the data from a special data structure called a `dataframe` into a structure you're more familiar with, a `list`.
 
 ```{python}
-df_two_col = df[[x_var, y_var]]
-df_two_col = df_two_col.dropna()
-df_two_col_clamp = clamp_database(df_two_col, (5,12), (0,50))
-data_points_list = [(x,y) for x, y in df_two_col.values]
+df_two_col = df[[x_var_label, y_var_label]]  # creating new dataframe with only 2 columns
+df_two_col = df_two_col.dropna() # removing rows with no response (NaN)
+df_two_col_clamp = clamp_database(df_two_col, (5,12), (0,50))  # clamping the dataframe so it fits within the domains
+data_points_list = [(x,y) for x, y in df_two_col.values]  # copying data from dataframe to list
 ```
 
-# Plotting the data
+# 🎨 Plotting the data
 
-Now, we'll plot the data on a scatter plot. We're using a different tool to plot the data, but it's similar to the tool you created in the scatter plot lab earlier this unit.
+Now, we'll plot the data on a scatter plot. We're using a different tool to plot the data, but it's similar to the tool you created in the scatter plot lab earlier this unit. First, we setup the plot using the `create_graph()` function. Then, you can plot data with two variables using the `draw()` function.
+
+Depending on the data you are plotting, you may want to add some jitter to the data so you can better see the distribution of the data. To do this, we'll use an *optional argument* to the the `draw()` function. *Optional arguments* are paramaters that can be passed into a function to effect its behavior but are not required. The function works with or without them.
+
+💻 **TODO:** Run the cell below to plot the data normally. Then, add the optional argument `jitter=True` to the `draw()` function to see what it does.
+
+```{python}
+ax = create_graph(x_var_label, y_var_label)
+draw(data_points_list, ax)
+```
+
+# 📈 Summaraizing the data with a line
+
+Now that we've plotted all of our data, we can (potentially) start to see trends in our data. When the x value is low is the y value also low? What about when the x value is high? 🧐 
+
+We can define a line to represent a potential trend using a slope variable (`m`) along with a y-intercept variable (`b`). Passing `m` and `b` into the `draw_line()` function draws the line on the plot using the equation of a line, `y = m*x + b`.
+
+💻 **TODO:** Try out different `m` and `b` variables to create a line that best summarizes the trend in the data *(You'll probably want to add the optional `jitter=True` arguement to the `draw()` function here too)*.
 
 ```{python}
 ax = create_graph(x_var, y_var)
 draw(data_points_list, ax)
-```
 
-```{python}
-ax = create_graph(x_var, y_var)
-draw(data_points_list, ax)
-
-m = .2
-b = .3
+m = # REPLACE THIS COMMENT WITH A SLOPE VALUE
+b = # REPLACE THIS COMMENT WITH A Y-INTERCEPT VALUE
 draw_line(m, b, ax)
 ```
 
+# 👍 👎 How good is your line?
+
+Determining what the best line is will require us to come up with some kind of metric to define what we mean by best. There are many metrics we could use. We'll come up with one as a class.
+
+Once we decide on a metric, we can hold it in a `loss()` function. A `loss()` function describes the goodness of fit of a line. For now, we want our loss be as close to 0 as possible.
+
+💻 **TODO:** Write a loss function to evaluate the goodness of fit for a line defined by slope `m` and y-intercept `b`. Use the metric we decide on as a class.
+
+TODO: Do we care about degrees of freedom?
+
 ```{python}
 def loss(m,b,data_points_list):
-    sqerror = 0
-    for point in data_points_list:
-        line_y = m*point[0] + b
-        distance = point[1] - line_y
-        sqerror += pow(distance,2)
-    return sqerror/len(data_points_list)
+
+    # YOUR CODE HERE
 ```
+
+The code below will use your loss function to calculate the loss of a given line and then add it to the plot we're constructing.
+
+💻 **TODO:** Use this code to test your loss function and then compare your line with other's line. Who achieved the smallest loss? 🧐 
+
 
 ```{python}
 ax = create_graph(x_var, y_var)
 draw(data_points_list, ax)
 
-m = 0.2
-b = .3
+m = 0
+b = 1
 draw_line(m, b, ax)
 line_loss = loss(m, b, data_points_list)
 add_loss(line_loss, ax)
 ```
 
-```{python}
-min_loss = loss(0,0, data_points_list)
-min_m = 0
-min_b = 0
-for m in range(0,int(2/.25)):
-    for b in range(0,10):
-        curr_loss = loss(m*.25, b, data_points_list)
-        if curr_loss < min_loss:
-            min_loss = curr_loss
-            min_m = m*.25
-            min_b = b
+With our shiny new `loss()` function, we can start thinking about way to minimize loss and find the best line to describe a potential trend in our data.
 
-(min_m, min_b)
-(min_m, min_b, loss(min_m, min_b, data_points_list))
-            
-```
-
-```{python}
-# %matplotlib notebook
-```
-
-```{python}
-import numpy as np
-import matplotlib.pyplot as plt
-import time
-```
-
-```{python}
-def pltsin(ax, colors=['b']):
-    x = np.linspace(0,1,100)
-    if ax.lines:
-        for line in ax.lines:
-            line.set_xdata(x)
-            y = np.random.random(size=(100,1))
-            line.set_ydata(y)
-    else:
-        for color in colors:
-            y = np.random.random(size=(100,1))
-            ax.plot(x, y, color)
-    fig.canvas.draw()
-```
-
-```{python}
-fig,ax = plt.subplots(1,1)
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-ax.set_xlim(0,1)
-ax.set_ylim(0,1)
-for f in range(5):
-    pltsin(ax, ['b', 'r'])
-    time.sleep(1)
-```
-
-```{python}
-
-```
+## How do you think we can find a line that has a small loss? 🧐
