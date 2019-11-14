@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # helpers.py
 # by Jacob Wolf, Chris Proctor, Jenny Han, and Krate Ng
 # Functions which support summarizing data with a line lab
@@ -14,6 +15,7 @@
 
 # Of course, if you really like this place, stay a while. You can ask a
 # teacher about it if you're interested.
+#
 # =============================================================================
 
 import matplotlib.pyplot as plt
@@ -49,13 +51,13 @@ def clamp_database(db, x_domain, y_domain):
 
 def create_graph(x_label, y_label):
     """
-    Creates a pyplot graph with bottom left corner (0,0) and top right corner (1,1). Sets the axeses labels
+    Creates a pyplot graph with bottom left corner (0.1,0.1) and top right corner (.9,.9). Sets the axeses labels
     based on x_label and y_label. Returns the axes so it can be added to by future function calls.
     input: sting, string
     output: matplotlib Axes
     """
     fig = plt.figure()
-    ax = fig.add_axes([0,0,1,1])
+    ax = fig.add_axes([.1,.1,.8,.8])
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
     return ax
@@ -78,23 +80,25 @@ def draw(data_points_list, ax, jitter = False):
     [[10, 30], [45, 55], [-20, 10]]. Optionally addes jitter to the list to make the magnitude
     of ordinal or categorical values more obvious in the plot.
     input: list, matplotlib Axes, optional boolean
-    output: none
+    output: matplotlib Axes
     """
     x, y = zip(*data_points_list)
     if jitter:
         x = jitter_list(x, 0.1)
         y = jitter_list(y, 0.1)
     ax.scatter(x, y, alpha=0.5)
+    return ax
 
 def draw_line(slope, y_intercept, ax):
     """
     Draws a line with the given slope and y-intercept.
     If you have already drawn a scatter plot, will draw the line over that graph.
     input: int or float, int or float, matplotlib Axes
-    output: none
+    output: matplotlib Axes
     """
     xmin, xmax = plt.xlim()
     ax.plot([xmin, xmax], [y_intercept + slope * xmin, y_intercept + slope * xmax])
+    return ax
 
 
 def add_loss(loss, ax):
@@ -102,6 +106,7 @@ def add_loss(loss, ax):
     Adds text to a matplotlib Axes ax to display the loss of a regression line. Text is
     position just outside the plot bounds in the top right corner.
     input: int or float, matplotlib Axes
-    output: none
+    output: matplotlib Axes
     """
-    ax.text(1.05,.95,'loss: {}'.format(loss), bbox=dict(facecolor='red', alpha=0.5), horizontalalignment='left', verticalalignment='top', transform=ax.transAxes)
+    ax.text(1,1,'loss: {}'.format(loss), bbox=dict(facecolor='red', alpha=0.9), horizontalalignment='right', verticalalignment='top', transform=ax.transAxes)
+    return ax
