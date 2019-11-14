@@ -87,7 +87,6 @@ def draw(data_points_list, ax, jitter = False):
         x = jitter_list(x, 0.1)
         y = jitter_list(y, 0.1)
     ax.scatter(x, y, alpha=0.5)
-    return ax
 
 def draw_line(slope, y_intercept, ax):
     """
@@ -98,7 +97,6 @@ def draw_line(slope, y_intercept, ax):
     """
     xmin, xmax = plt.xlim()
     ax.plot([xmin, xmax], [y_intercept + slope * xmin, y_intercept + slope * xmax])
-    return ax
 
 
 def add_loss(loss, ax):
@@ -109,4 +107,3 @@ def add_loss(loss, ax):
     output: matplotlib Axes
     """
     ax.text(1,1,'loss: {}'.format(loss), bbox=dict(facecolor='red', alpha=0.9), horizontalalignment='right', verticalalignment='top', transform=ax.transAxes)
-    return ax
