@@ -1,6 +1,6 @@
 # Lab: Summarizing data with a line
 
-In this lab, students will use build on their work with scatter plots to add a line of best fit to the plot.
+In this lab, students will build on their work with scatter plots to add a line of best fit to the plot.
 
 We will evaluate our lines by calculating the mean square error of our lines.
 
