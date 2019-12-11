@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # helpers.py
-# by Jacob Wolf, Chris Proctor, Jenny Han, and Krate Ng
+# by Jacob Wolf, Chris Proctor, Jenny Han, and Krates Ng
 # Functions which support summarizing data with a line lab
 
 # =============================================================================
@@ -20,6 +20,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 
 
 def clamp_point(x, domain):
@@ -51,7 +52,7 @@ def clamp_database(db, x_domain, y_domain):
 
 def create_graph(x_label, y_label):
     """
-    Creates a pyplot graph with bottom left corner (0.1,0.1) and top right corner (.9,.9). Sets the axeses labels
+    Creates a pyplot graph with bottom left corner (0,0) and top right corner (1,1). Sets the axeses labels
     based on x_label and y_label. Returns the axes so it can be added to by future function calls.
     input: sting, string
     output: matplotlib Axes
@@ -87,6 +88,7 @@ def draw(data_points_list, ax, jitter = False):
         x = jitter_list(x, 0.1)
         y = jitter_list(y, 0.1)
     ax.scatter(x, y, alpha=0.5)
+    return ax
 
 def draw_line(slope, y_intercept, ax):
     """
@@ -95,8 +97,9 @@ def draw_line(slope, y_intercept, ax):
     input: int or float, int or float, matplotlib Axes
     output: matplotlib Axes
     """
-    xmin, xmax = plt.xlim()
+    xmin, xmax = ax.get_xlim()
     ax.plot([xmin, xmax], [y_intercept + slope * xmin, y_intercept + slope * xmax])
+    return ax
 
 
 def add_loss(loss, ax):
@@ -107,3 +110,29 @@ def add_loss(loss, ax):
     output: matplotlib Axes
     """
     ax.text(1,1,'loss: {}'.format(loss), bbox=dict(facecolor='red', alpha=0.9), horizontalalignment='right', verticalalignment='top', transform=ax.transAxes)
+    return ax
+
+
+def animated_draw(slope, y_intercept, loss, ax, delay = .5):
+    """
+    Produced one step of a dynamic plot. If first step in the animation, plots a new line and adds a new text
+    element to hold the loss text. In the following steps, updates the line and the loss text for the current
+    iteration. Adds a delay after drawing in anticipation of being called again by a student's for loop.
+    input: int or float, matplotlib Axes
+    output: matplotlib Axes
+    """
+    if ax.lines:
+        xmin, xmax = plt.xlim()
+        for line in ax.lines:
+            line.set_xdata([xmin, xmax])
+            line.set_ydata([y_intercept + slope * xmin, y_intercept + slope * xmax])
+        for text in ax.texts:
+            text.set_text('loss: {}'.format(loss))
+    else:
+        xmin, xmax = plt.xlim()
+        ax.plot([xmin, xmax], [y_intercept + slope * xmin, y_intercept + slope * xmax])
+        ax.text(1,1,'loss: {}'.format(loss), bbox=dict(facecolor='red', alpha=0.9), horizontalalignment='right', verticalalignment='top', transform=ax.transAxes)
+    add_loss(loss, ax)
+    ax.figure.canvas.draw()
+    plt.pause(delay)
+    return ax

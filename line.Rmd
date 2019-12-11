@@ -15,6 +15,8 @@ jupyter:
 ```{python}
 import pandas as pd
 from helpers import clamp_database, create_graph, draw, draw_line, add_loss
+import math
+from matplotlib import pyplot as plt
 ```
 
 # 🚿 Cleaning up our data
@@ -88,17 +90,14 @@ Once we decide on a metric, we can hold it in a `loss()` function. A `loss()` fu
 
 💻 **TODO:** Write a loss function to evaluate the goodness of fit for a line defined by slope `m` and y-intercept `b`. Use the metric we decide on as a class.
 
-TODO: Do we care about degrees of freedom?
-
 ```{python}
 def loss(m,b,data_points_list):
-
     # YOUR CODE HERE
 ```
 
 The code below will use your loss function to calculate the loss of a given line and then add it to the plot we're constructing.
 
-💻 **TODO:** Use this code to test your loss function and then compare your line with other's line. Who achieved the smallest loss? 🧐 
+💻 **TODO:** Use this code to test your loss function.
 
 
 ```{python}
@@ -114,4 +113,34 @@ add_loss(line_loss, ax)
 
 With our shiny new `loss()` function, we can start thinking about way to minimize loss and find the best line to describe a potential trend in our data.
 
-## How do you think we can find a line that has a small loss? 🧐
+
+## Which group had the smallest loss? 🧐
+
+The code below lets us plot multiple scatter plots and lines of best fit at one.
+
+💻 **TODO:** Change the `mb_pairs` list to be the `(m, b)` pairs representing the lines you wrote.
+
+```{python}
+# Change these:
+num_cols = 2
+mb_pairs = [(.1,.4),(.2,.5),(.3,.6), (.1,.6)]
+
+#Don't change this:
+num_rows = math.ceil(len(mb_pairs)/num_cols)
+fig, axes = plt.subplots(nrows=num_rows,ncols=num_cols,squeeze=False)
+ax_it = axes.flat
+for i in range(len(mb_pairs)):
+        ax = next(ax_it)
+        m = mb_pairs[i][0]
+        b = mb_pairs[i][1]
+        ax.set_xlabel(x_var_label)
+        ax.set_ylabel(y_var_label)
+        draw(data_points_list, ax, jitter=True)
+        draw_line(m, b, ax)
+        line_loss = loss(m, b, data_points_list)
+        add_loss(line_loss, ax)
+```
+
+```{python}
+
+```
